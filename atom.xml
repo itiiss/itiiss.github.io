@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://zaregoto.github.io</id>
+    <id>https://itiiss.github.io</id>
     <title>Gridea</title>
-    <updated>2020-07-26T16:16:34.367Z</updated>
+    <updated>2020-07-26T16:29:19.116Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://zaregoto.github.io"/>
-    <link rel="self" href="https://zaregoto.github.io/atom.xml"/>
+    <link rel="alternate" href="https://itiiss.github.io"/>
+    <link rel="self" href="https://itiiss.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
-    <logo>https://zaregoto.github.io/images/avatar.png</logo>
-    <icon>https://zaregoto.github.io/favicon.ico</icon>
+    <logo>https://itiiss.github.io/images/avatar.png</logo>
+    <icon>https://itiiss.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
     <entry>
         <title type="html"><![CDATA[Test Page]]></title>
-        <id>https://zaregoto.github.io/post/hello-gridea/</id>
-        <link href="https://zaregoto.github.io/post/hello-gridea/">
+        <id>https://itiiss.github.io/post/hello-gridea/</id>
+        <link href="https://itiiss.github.io/post/hello-gridea/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
         <content type="html"><![CDATA[<p>test page</p>
