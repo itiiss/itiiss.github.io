@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Immer的基本用法 | Gridea</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://itiiss.github.io/favicon.ico?v=1595863582991">
+<link rel="stylesheet" href="https://itiiss.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="基本用法
+produce(state, draft =&gt; {
+    // mutate draft
+    draft.xxx = xxx
+})
+
+setState用法
+setState(
+    produce(draft =&g..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://itiiss.github.io">
+        <img src="https://itiiss.github.io/images/avatar.png?v=1595863582991" class="site-logo">
+        <h1 class="site-title">Gridea</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://itiiss.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Immer的基本用法</h2>
+            <div class="post-date">2020-07-27</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="基本用法">基本用法</h2>
+<pre><code class="language-js">produce(state, draft =&gt; {
+    // mutate draft
+    draft.xxx = xxx
+})
+</code></pre>
+<h2 id="setstate用法">setState用法</h2>
+<pre><code class="language-react">setState(
+    produce(draft =&gt; {
+        // mutate draft
+    })
+)
+</code></pre>
+<h2 id="reducer用法">Reducer用法</h2>
+<pre><code class="language-react">const reducer = produce((draft, action) =&gt; {
+    switch(action.type) {
+            case'mutate':
+            	draft.xxx = action.xxx
+            	break;
+        	default:
+            	draft = {}
+    }
+    
+} )
+
+const initialState = {
+    xxx: 'xxx'
+}
+const nextState = reducer(initialState, {type: 'mutate', xxx: 'xxx'})
+</code></pre>
+<h2 id="reducer返回值">Reducer返回值</h2>
+<pre><code class="language-react">const userReducer = produce((draft, action) =&gt; {
+    switch (action.type) {
+        case &quot;renameUser&quot;:
+            // OK: we modify the current state
+            draft.users[action.payload.id].name = action.payload.name
+            return draft // same as just 'return'
+        case &quot;loadUsers&quot;:
+            // OK: we return an entirely new state
+            return action.payload
+        case &quot;adduser-1&quot;:
+            // NOT OK: This doesn't do change the draft nor return a new state!
+            // It doesn't modify the draft (it just redeclares it)
+            // In fact, this just doesn't do anything at all
+            // 对draft整体进行redeclare没有意义，只能对draft中的属性进行更改才有效
+            draft = {users: [...draft.users, action.payload]}
+            return
+        case &quot;adduser-2&quot;:
+            // NOT OK: modifying draft *and* returning a new state
+        	// 不能同时对draft进行修改和返回一个新的状态对象
+            draft.userCount += 1
+            return {users: [...draft.users, action.payload]}
+        case &quot;adduser-3&quot;:
+            // OK: returning a new state. But, unnecessary complex and expensive
+            // 可以但没必要
+            return {
+                userCount: draft.userCount + 1,
+                users: [...draft.users, action.payload]
+            }
+        case &quot;adduser-4&quot;:
+            // OK: the immer way
+            // immer的正确打开方式
+            draft.userCount += 1
+            draft.users.push(action.payload)
+            return
+    }
+})
+</code></pre>
+<h2 id="reducer返回undefiend">Reducer返回undefiend</h2>
+<pre><code class="language-react">produce({}, draft =&gt; {}) // 这种情况不会返回undefine，语义为对原始对象不做任何操作，返回原始对象
+
+const state = {
+    hello: &quot;world&quot;
+}
+
+produce(state, draft =&gt; {})
+produce(state, draft =&gt; undefined) // 都返回原始状态 { hello: &quot;world&quot;}
+
+produce(state, draft =&gt; nothing) // 返回新状态undefined
+</code></pre>
+<h2 id="使用void">使用void</h2>
+<p>void 运算符对给定的表达式进行求值，然后返回 undefiend，可以避免写成一个mutate函数占用多行</p>
+<pre><code class="language-react">// Single mutation
+produce(draft =&gt; void (draft.user.age += 1))
+
+
+// Multiple mutations
+produce(draft =&gt; void ((draft.user.age += 1), (draft.user.height = 186)))
+</code></pre>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://itiiss.github.io/post/hello-gridea/">
+                  <h3 class="post-title">
+                    Test Page
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://itiiss.github.io</id>
     <title>Gridea</title>
-    <updated>2020-07-27T15:14:44.300Z</updated>
+    <updated>2020-07-27T15:26:24.709Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://itiiss.github.io"/>
     <link rel="self" href="https://itiiss.github.io/atom.xml"/>
@@ -10,6 +10,103 @@
     <logo>https://itiiss.github.io/images/avatar.png</logo>
     <icon>https://itiiss.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[Immer的基本用法]]></title>
+        <id>https://itiiss.github.io/post/immer-de-ji-ben-yong-fa/</id>
+        <link href="https://itiiss.github.io/post/immer-de-ji-ben-yong-fa/">
+        </link>
+        <updated>2020-07-27T15:16:17.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="基本用法">基本用法</h2>
+<pre><code class="language-js">produce(state, draft =&gt; {
+    // mutate draft
+    draft.xxx = xxx
+})
+</code></pre>
+<h2 id="setstate用法">setState用法</h2>
+<pre><code class="language-react">setState(
+    produce(draft =&gt; {
+        // mutate draft
+    })
+)
+</code></pre>
+<h2 id="reducer用法">Reducer用法</h2>
+<pre><code class="language-react">const reducer = produce((draft, action) =&gt; {
+    switch(action.type) {
+            case'mutate':
+            	draft.xxx = action.xxx
+            	break;
+        	default:
+            	draft = {}
+    }
+    
+} )
+
+const initialState = {
+    xxx: 'xxx'
+}
+const nextState = reducer(initialState, {type: 'mutate', xxx: 'xxx'})
+</code></pre>
+<h2 id="reducer返回值">Reducer返回值</h2>
+<pre><code class="language-react">const userReducer = produce((draft, action) =&gt; {
+    switch (action.type) {
+        case &quot;renameUser&quot;:
+            // OK: we modify the current state
+            draft.users[action.payload.id].name = action.payload.name
+            return draft // same as just 'return'
+        case &quot;loadUsers&quot;:
+            // OK: we return an entirely new state
+            return action.payload
+        case &quot;adduser-1&quot;:
+            // NOT OK: This doesn't do change the draft nor return a new state!
+            // It doesn't modify the draft (it just redeclares it)
+            // In fact, this just doesn't do anything at all
+            // 对draft整体进行redeclare没有意义，只能对draft中的属性进行更改才有效
+            draft = {users: [...draft.users, action.payload]}
+            return
+        case &quot;adduser-2&quot;:
+            // NOT OK: modifying draft *and* returning a new state
+        	// 不能同时对draft进行修改和返回一个新的状态对象
+            draft.userCount += 1
+            return {users: [...draft.users, action.payload]}
+        case &quot;adduser-3&quot;:
+            // OK: returning a new state. But, unnecessary complex and expensive
+            // 可以但没必要
+            return {
+                userCount: draft.userCount + 1,
+                users: [...draft.users, action.payload]
+            }
+        case &quot;adduser-4&quot;:
+            // OK: the immer way
+            // immer的正确打开方式
+            draft.userCount += 1
+            draft.users.push(action.payload)
+            return
+    }
+})
+</code></pre>
+<h2 id="reducer返回undefiend">Reducer返回undefiend</h2>
+<pre><code class="language-react">produce({}, draft =&gt; {}) // 这种情况不会返回undefine，语义为对原始对象不做任何操作，返回原始对象
+
+const state = {
+    hello: &quot;world&quot;
+}
+
+produce(state, draft =&gt; {})
+produce(state, draft =&gt; undefined) // 都返回原始状态 { hello: &quot;world&quot;}
+
+produce(state, draft =&gt; nothing) // 返回新状态undefined
+</code></pre>
+<h2 id="使用void">使用void</h2>
+<p>void 运算符对给定的表达式进行求值，然后返回 undefiend，可以避免写成一个mutate函数占用多行</p>
+<pre><code class="language-react">// Single mutation
+produce(draft =&gt; void (draft.user.age += 1))
+
+
+// Multiple mutations
+produce(draft =&gt; void ((draft.user.age += 1), (draft.user.height = 186)))
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Test Page]]></title>
         <id>https://itiiss.github.io/post/hello-gridea/</id>
